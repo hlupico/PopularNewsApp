@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,43 +16,52 @@ import java.util.List;
  */
 public class ArticleListAdapter extends BaseAdapter {
 
-    private final List<Article> mArticle = new ArrayList<>();
+    private List<Article> articleItems;
     private Context mContext;
 
-    public ArticleListAdapter(Context c) {
-        this.mContext = c;
+    public ArticleListAdapter(Context context) {
+        this.mContext = context;
     }
 
     public int getCount() {
-        return mArticle.size();
+        return articleItems.size();
     }
 
     public Object getItem(int position) {
-        return mArticle.get(position);
+        return articleItems.get(position);
     }
 
     public long getItemId(int position) {
         return 0;
     }
 
-    // create a new ButtonView for each item referenced by the Adapter
+    //Create a new view for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        final Article article = (Article) getItem(position);
-        RelativeLayout articleLayout = null;
-        //Inflate video_item view, create new view if not recycled, display returned data
 
+        Article articleItem = articleItems.get(position);
+        RelativeLayout articleLayout = null;
+
+        //Inflate video_item view, create new view if not recycled, display returned data
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             articleLayout = (RelativeLayout) inflater.inflate(R.layout.article_layout, null);
         }
 
+        //Create thumbnail view and author for each article
         ImageView thumbnail = (ImageView) convertView.findViewById(R.id.photo);
         TextView author = (TextView) convertView.findViewById(R.id.author);
 
+        //TODO - Import Picasso library once mData issue resolved
         //Picasso's load() method will fetch thumbnail of the video
         //.into() passes the thumbnail to ImageView
-//        Picasso.with(getApplicationContext()).load(article.getmPhotoUrl()).into(thumbnail);
-        author.setText(article.getmAuthor());
+        // Picasso.with(getApplicationContext()).load(articleItem.getmPhotoUrl()).into(thumbnail);
+        author.setText(articleItem.getmAuthor());
         return articleLayout;
+    }
+
+    //setArticleItems will update list with new data
+    public void setArticleItems(List<Article> list){
+        articleItems = list;
+        notifyDataSetChanged();
     }
 }

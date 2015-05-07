@@ -7,26 +7,39 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-public class MainActivity extends ActionBarActivity {
+import java.util.List;
 
+
+
+
+public class MainActivity extends ActionBarActivity implements DataListener{
+
+    //Declare the ArticleListAdapter and ListView
     ArticleListAdapter mAdapter;
     ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set ContentView to activity_main which contains a listView
         setContentView(R.layout.activity_main);
 
-        // Create a new TodoListAdapter for this ListActivity's ListView
+        //Create mAdapter & listView
         mAdapter = new ArticleListAdapter(getApplicationContext());
         Log.v("mAdapter", mAdapter.toString());
         mListView = (ListView)  findViewById(R.id.listView);
-        //Attach the adapter to this ListActivity's ListView
+        //Attach the adapter to this activity_main's ListView
         mListView.setAdapter(mAdapter);
 
-        //Call GetNYJsonData to get data
+        //Create new GetNYJsonData and call jsonData to get data
         GetNYJsonData jsonData = new GetNYJsonData("http://api.nytimes.com/svc/mostpopular/v2/mostemailed/all-sections/1.json?api-key=fa5723452d7d2454cf24a2a3d920012c:10:66680873&offset=0");
-        jsonData.execute();
+        //Pass context as listener to GetNYJsondata
+        //Listener will be used to pass data to adapter after data is downloaded
+        jsonData.execute(this);
+
+        //Call onSuccess() and pass the articles to the List to the Adapter
+        //This will create the listView after the data is collected from NYT
+        //onSuccess();
     }
 
     @Override
@@ -49,5 +62,12 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onSuccess(List<Article> articles) {
+        //Pass the list to the adapter
+        mAdapter.setArticleItems(articles);
     }
 }
